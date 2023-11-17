@@ -1,3 +1,5 @@
+package stack;
+
 public class LinkedList<E> {
     private Node<E> head = null;
     private Node<E> tail = null;
@@ -76,7 +78,7 @@ public class LinkedList<E> {
     @Override
     public String toString() {
         Node<E> current = head;
-        String string = "LinkedList:";
+        String string = "stack.LinkedList:";
         while (current.next != null) {
             string += current.data.toString() + ',';
             current = current.next;

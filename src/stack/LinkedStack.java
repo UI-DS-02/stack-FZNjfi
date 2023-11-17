@@ -1,3 +1,7 @@
+package stack;
+
+import stack.Stack;
+
 public class LinkedStack<E> implements Stack<E> {
 
     private LinkedList<E> list = new LinkedList<>();
