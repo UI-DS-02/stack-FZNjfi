@@ -7,7 +7,7 @@ public class LinkedStack<E> implements Stack<E> {
     private LinkedList<E> list = new LinkedList<>();
 
     @Override
-    public void push(E o, int number) {
+    public void push(E o) {
         list.addFirst(o);
     }
 

@@ -7,7 +7,8 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
         String input = "scanner.nextLine();";
         while (!input.equals("done")) {
-                input = scanner.nextLine();
+            System.out.println("ENTER:");
+            input = scanner.nextLine();
                 try {
                     System.out.println(Calculator.calculator(input));
                 }
