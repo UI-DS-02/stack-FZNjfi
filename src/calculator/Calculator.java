@@ -17,94 +17,51 @@ public class Calculator {
 
     }
 
-    private static boolean isNotDone(String inputs[], int i) {
-        return inputs.length > i + 2;
-    }
-
     private static void postfix() {
-        //String decimalNumber = "";
+        Stack<String> stack = new LinkedStack<>();
         String[] inputs = phrase.split("");
         String[] fix = new String[inputs.length];
         int index = 0;
         for (i = 0; i < inputs.length; i++) {
-            switch (inputs[i]) {
-                case "+":
-                    if (isNotDone(inputs, i)) {
-                        if (inputs[i + 2].equals(".")) {
-                            fix[index++] = decimalNumber(inputs);
-                        } else {
-                            fix[index++] = multiDigit(inputs[++i], inputs);
-                        }
-                    } else {
-
-                        fix[index++] = multiDigit(inputs[++i], inputs);
-                    }
-                    fix[index++] = "+";
-                    break;
-                case "-":
-                    if (isNotDone(inputs, i)) {
-                        if (inputs[i + 2].equals(".")) {
-                            fix[index++] = decimalNumber(inputs);
-                        } else
-                            fix[index++] = multiDigit(inputs[++i], inputs);
-                    } else {
-                        fix[index++] = multiDigit(inputs[++i], inputs);
-                    }
-                    fix[index++] = "-";
-                    break;
-                case "/":
-                    if (isNotDone(inputs, i)) {
-                        if (inputs[i + 2].equals(".")) {
-                            fix[index++] = decimalNumber(inputs);
-
-                        } else {
-                            fix[index++] = multiDigit(inputs[++i], inputs);
-                        }
-                    } else {
-                        fix[index++] = multiDigit(inputs[++i], inputs);
-                    }
-                    fix[index++] = "/";
-                    break;
-                case "^":
-                    if (isNotDone(inputs, i)) {
-
-                        if (inputs[i + 2].equals(".")) {
-                            fix[index++] = decimalNumber(inputs);
-
-
-                        } else {
-                            fix[index++] = multiDigit(inputs[++i], inputs);
-                        }
-                    } else {
-                        fix[index++] = multiDigit(inputs[++i], inputs);
-                    }
-                    fix[index++] = "^";
-                    break;
-                case "*":
-                    if (isNotDone(inputs, i)) {
-                        if (inputs[i + 2].equals(".")) {
-                            fix[index++] = decimalNumber(inputs);
-
-                        } else {
-                            fix[index++] = multiDigit(inputs[++i], inputs);
-                        }
-                    } else {
-                        fix[index++] = multiDigit(inputs[++i], inputs);
-                    }
-                    fix[index++] = "*";
-                    //i++;
-                    break;
-                case "!": {
-                    fix[index++] = "!";
-                    break;
+            if (isNumber(inputs[i]))
+                fix[index++] = multiDigit(inputs[i], inputs);
+            else if (inputs[i].equals("(")) {
+                stack.push(inputs[i]);
+            } else if (inputs[i].equals(")")) {
+                while (!stack.top().equals("(")) {
+                    fix[index++] = stack.pop();
+                    if (stack.isEmpty())
+                        throw new IncorrectInput();
                 }
-                default: {
-                    if (isNumber(inputs[i]))
-                        fix[index++] = multiDigit(inputs[i], inputs);
+                stack.pop();
+            } else if (!inputs[i].equals( " ")){
+                while (!stack.isEmpty()
+                        && priority(inputs[i]) <= priority(stack.top())) {
+                    fix[index++] = stack.pop();
                 }
+                stack.push(inputs[i]);
             }
         }
+        while (!stack.isEmpty())
+            fix[index++]=stack.pop();
         postfix = fix;
+    }
+
+    private static int priority(String s) {
+        switch (s) {
+            case "+":
+            case "-":
+                return 1;
+            case "/":
+            case "*":
+                return 2;
+            case "^":
+                return 3;
+            case "!":
+                return 4;
+
+        }
+        return 0;
     }
 
     private static String multiDigit(String first, String[] inputs) {
@@ -116,25 +73,12 @@ public class Calculator {
         else if (first.equals("e"))
             return "2.718";
         while (isNumber(inputs[i + 1])) {
-            number += inputs[i++];
+            number += inputs[++i];
             if (inputs.length == i + 1)
                 break;
         }
         return number;
 
-    }
-
-    private static String decimalNumber(String[] inputs) {
-        String decimalNumber = inputs[i] + ".";
-//        if (inputs.length == i + 1)
-//            return decimalNumber;
-        while (isNumber(inputs[i + 1])) {
-            i++;
-            decimalNumber += inputs[i];
-            if (inputs.length == i + 1)
-                break;
-        }
-        return decimalNumber;
     }
 
     private static double mul(Double num1, Double num2) {
@@ -187,12 +131,14 @@ public class Calculator {
     private static Double calculate() {
         Stack<Double> stack = new LinkedStack<>();
         int j = 0;
-        while (postfix[j] != null) {
+        while (j < postfix.length && postfix[j] != null) {
             if (!isNotNumber(postfix[j])) {
                 stack.push(Double.parseDouble(postfix[j++]));
             } else {
                 switch (postfix[j++]) {
                     case "+":
+//                        double one = stack.pop();
+//                        double two = stack.pop();
                         stack.push(add(stack.pop(), stack.pop()));
                         break;
                     case "-":

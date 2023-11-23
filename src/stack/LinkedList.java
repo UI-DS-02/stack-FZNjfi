@@ -71,6 +71,8 @@ public class LinkedList<E> {
         }
         E answer = head.getData();
         head = head.getNext();
+        if (head==null)
+            tail=null;
         size--;
         return answer;
     }
