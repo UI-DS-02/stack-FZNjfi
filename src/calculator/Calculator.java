@@ -34,7 +34,7 @@ public class Calculator {
                         throw new IncorrectInput();
                 }
                 stack.pop();
-            } else if (!inputs[i].equals( " ")){
+            } else if (!inputs[i].equals(" ")) {
                 while (!stack.isEmpty()
                         && priority(inputs[i]) <= priority(stack.top())) {
                     fix[index++] = stack.pop();
@@ -43,7 +43,7 @@ public class Calculator {
             }
         }
         while (!stack.isEmpty())
-            fix[index++]=stack.pop();
+            fix[index++] = stack.pop();
         postfix = fix;
     }
 
@@ -66,12 +66,13 @@ public class Calculator {
 
     private static String multiDigit(String first, String[] inputs) {
         String number = first;
-        if (inputs.length == i + 1)
-            return number;
-        if (first.equals("P") && inputs[i + 1].equals("I"))
-            return "3.1416";
-        else if (first.equals("e"))
+        if (first.equals("e"))
             return "2.718";
+        else if (inputs.length == i + 1){
+            return number;}
+        else if (first.equals("P") && inputs[i + 1].equals("I")){
+            i++;
+            return "3.1416";}
         while (isNumber(inputs[i + 1])) {
             number += inputs[++i];
             if (inputs.length == i + 1)
@@ -97,10 +98,15 @@ public class Calculator {
 
     }
 
+    private static double negative(Double num1) {
+        return -num1;
+
+    }
+
     private static double factorial(double num) {
         int factorial = 1;
         if (num == (int) num) {
-            for (int j = 2; j < num; j++) {
+            for (int j = 2; j <= num; j++) {
                 factorial *= j;
             }
             return factorial;
@@ -137,12 +143,13 @@ public class Calculator {
             } else {
                 switch (postfix[j++]) {
                     case "+":
-//                        double one = stack.pop();
-//                        double two = stack.pop();
                         stack.push(add(stack.pop(), stack.pop()));
                         break;
                     case "-":
-                        stack.push(sub(stack.pop(), stack.pop()));
+                        if (isNotNumber(postfix[j-3])||stack.size()==1)
+                            stack.push(negative(stack.pop()));
+                        else
+                            stack.push(sub(stack.pop(), stack.pop()));
                         break;
                     case "*":
                         stack.push(mul(stack.pop(), stack.pop()));
